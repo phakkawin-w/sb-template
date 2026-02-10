@@ -2,77 +2,107 @@
 <html lang="th">
 <head>
 <meta charset="UTF-8">
-<title>S.Boonmeerit</title>
+<title>S.Boonmeerit System</title>
 <style>
-body {
-    font-family: Arial;
-    background:#f2f2f2;
-    text-align:center;
+body{
+  font-family: "Segoe UI",sans-serif;
+  background: linear-gradient(135deg,#1e3c72,#2a5298);
+  margin:0;
+  padding:0;
+  color:#333;
 }
-.box {
-    background:white;
-    width:90%;
-    margin:auto;
-    padding:20px;
-    border-radius:10px;
+h1,h2{color:#fff;}
+.container{
+  width:90%;
+  max-width:1000px;
+  margin:auto;
+  padding:20px;
 }
-button {
-    padding:10px 15px;
-    margin:5px;
-    background:black;
-    color:white;
-    border:none;
-    border-radius:5px;
+.card{
+  background:#fff;
+  padding:20px;
+  border-radius:12px;
+  box-shadow:0 5px 15px rgba(0,0,0,0.2);
+  margin-top:20px;
 }
-button:hover {background:gray;}
-input {
-    padding:8px;
-    margin:5px;
+input,button{
+  padding:10px;
+  margin:5px;
+  border-radius:6px;
+  border:1px solid #ccc;
 }
-table {
-    width:100%;
-    border-collapse:collapse;
+button{
+  background:#2a5298;
+  color:white;
+  border:none;
+  cursor:pointer;
 }
-th,td {
-    border:1px solid black;
-    padding:6px;
+button:hover{background:#1e3c72;}
+table{
+  width:100%;
+  border-collapse:collapse;
+  margin-top:10px;
 }
+th,td{
+  border:1px solid #ddd;
+  padding:8px;
+  text-align:center;
+}
+th{
+  background:#2a5298;
+  color:white;
+}
+.action-btn{
+  background:#ff9800;
+}
+.delete-btn{
+  background:#f44336;
+}
+.search{
+  width:50%;
+}
+.hidden{display:none;}
 </style>
 </head>
 <body>
 
+<div class="container">
+
 <h1>Welcome to S.Boonmeerit</h1>
 
 <!-- LOGIN -->
-<div id="loginPage" class="box">
+<div id="loginPage" class="card">
 <h2>Login</h2>
-<input type="text" id="user" placeholder="User"><br>
-<input type="password" id="pass" placeholder="Pass"><br>
+<input id="user" placeholder="Username"><br>
+<input id="pass" type="password" placeholder="Password"><br>
 <button onclick="login()">Login</button>
 <p id="msg"></p>
 </div>
 
 <!-- MENU -->
-<div id="menuPage" class="box" style="display:none;">
-<h2>welcome</h2>
+<div id="menuPage" class="card hidden">
+<h2>Menu</h2>
 <button onclick="showEmployee()">ข้อมูลพนักงาน</button>
-<button onclick="showMaterial()">ข้อมูลวัสดุสินค้า</button><br><br>
-<button onclick="logout()">BACK</button>
+<button onclick="showMaterial()">ข้อมูลวัสดุ</button><br><br>
+<button onclick="logout()">Logout</button>
 </div>
 
 <!-- EMPLOYEE -->
-<div id="employeePage" class="box" style="display:none;">
+<div id="employeePage" class="card hidden">
 <h2>ข้อมูลพนักงาน</h2>
 
-<input type="text" id="search" placeholder="ค้นหาชื่อหรือรหัส" onkeyup="searchEmployee()">
+<input class="search" id="searchEmp" placeholder="ค้นหาพนักงาน" onkeyup="renderEmployees()">
 
-<table id="empTable">
-<tr><th>รหัสพนักงาน</th><th>ชื่อ-นามสกุล</th></tr>
-<tr><td>600001</td><td>นาย สุเวช ทิมศรีกล่ำ</td></tr>
-<tr><td>600002</td><td>นาง พาเพลิน เทียนทอง</td></tr>
-<tr><td>600003</td><td>นาย ช้วน จันทร์น่วม</td></tr>
-<tr><td>600004</td><td>นาย สายันต์ เขจรลัย</td></tr>
-<tr><td>600005</td><td>นาย ธีระวิทย์ ภัทรเกียรติ</td></tr>
+<h3>เพิ่ม / แก้ไข พนักงาน</h3>
+<input id="empId" placeholder="รหัสพนักงาน">
+<input id="empName" placeholder="ชื่อ-นามสกุล">
+<button onclick="saveEmployee()">Save</button>
+
+<table>
+<thead>
+<tr><th>รหัส</th><th>ชื่อ-นามสกุล</th><th>จัดการ</th></tr>
+</thead>
+<tbody id="empTable"></tbody>
 </table>
 
 <br>
@@ -80,73 +110,119 @@ th,td {
 </div>
 
 <!-- MATERIAL -->
-<div id="materialPage" class="box" style="display:none;">
-<h2>ข้อมูลวัสดุก่อสร้าง</h2>
+<div id="materialPage" class="card hidden">
+<h2>ข้อมูลวัสดุ</h2>
 
-<input type="text" id="matName" placeholder="ชื่อวัสดุ">
-<input type="number" id="matQty" placeholder="จำนวน">
-<button onclick="addMaterial()">เพิ่ม</button>
+<h3>เพิ่ม / แก้ไข วัสดุ</h3>
+<input id="matName" placeholder="ชื่อวัสดุ">
+<input id="matQty" placeholder="จำนวน">
+<button onclick="saveMaterial()">Save</button>
 
-<table id="matTable">
-<tr><th>ชื่อวัสดุ</th><th>จำนวน</th><th>ลบ</th></tr>
-<tr><td>ปูนซีเมนต์</td><td>100</td><td><button onclick="deleteRow(this)">X</button></td></tr>
-<tr><td>เหล็กเส้น</td><td>200</td><td><button onclick="deleteRow(this)">X</button></td></tr>
+<table>
+<thead>
+<tr><th>ชื่อวัสดุ</th><th>จำนวน</th><th>จัดการ</th></tr>
+</thead>
+<tbody id="matTable"></tbody>
 </table>
 
 <br>
 <button onclick="backMenu()">BACK</button>
 </div>
 
-<script>
-function login(){
-    let u=document.getElementById("user").value;
-    let p=document.getElementById("pass").value;
-    if(u=="admin" && p=="1234"){
-        loginPage.style.display="none";
-        menuPage.style.display="block";
-    } else {
-        msg.innerHTML="Login ไม่ถูกต้อง";
-    }
-}
-function logout(){
-    menuPage.style.display="none";
-    loginPage.style.display="block";
-}
-function showEmployee(){
-    menuPage.style.display="none";
-    employeePage.style.display="block";
-}
-function showMaterial(){
-    menuPage.style.display="none";
-    materialPage.style.display="block";
-}
-function backMenu(){
-    employeePage.style.display="none";
-    materialPage.style.display="none";
-    menuPage.style.display="block";
-}
-function searchEmployee(){
-    let input=document.getElementById("search").value.toLowerCase();
-    let rows=document.getElementById("empTable").rows;
-    for(let i=1;i<rows.length;i++){
-        let txt=rows[i].innerText.toLowerCase();
-        rows[i].style.display = txt.includes(input) ? "" : "none";
-    }
-}
-function addMaterial(){
-    let name=document.getElementById("matName").value;
-    let qty=document.getElementById("matQty").value;
-    if(name==""||qty=="") return alert("กรอกข้อมูลให้ครบ");
-    let table=document.getElementById("matTable");
-    let row=table.insertRow();
-    row.insertCell(0).innerHTML=name;
-    row.insertCell(1).innerHTML=qty;
-    row.insertCell(2).innerHTML="<button onclick='deleteRow(this)'>X</button>";
-}
-function deleteRow(btn){
-    btn.parentNode.parentNode.remove();
-}
-</script>
+</div>
 
-</body>
-</html>
+<script>
+let employees = [
+  {id:"600001", name:"นาย สุเวช ทิมศรีกล่ำ"},
+  {id:"600002", name:"นาง พาเพลิน เทียนทอง"},
+  {id:"600003", name:"นาย ช้วน จันทร์น่วม"}
+];
+
+let materials = [
+  {name:"ปูนซีเมนต์", qty:100},
+  {name:"เหล็กเส้น", qty:200}
+];
+
+let editEmpIndex = -1;
+let editMatIndex = -1;
+
+function login(){
+  let u=user.value, p=pass.value;
+  if(u=="admin" && p=="1234"){
+    loginPage.classList.add("hidden");
+    menuPage.classList.remove("hidden");
+  }else{
+    msg.innerText="Username หรือ Password ไม่ถูกต้อง";
+  }
+}
+
+function logout(){
+  menuPage.classList.add("hidden");
+  loginPage.classList.remove("hidden");
+}
+
+function showEmployee(){
+  menuPage.classList.add("hidden");
+  employeePage.classList.remove("hidden");
+  renderEmployees();
+}
+
+function showMaterial(){
+  menuPage.classList.add("hidden");
+  materialPage.classList.remove("hidden");
+  renderMaterials();
+}
+
+function backMenu(){
+  employeePage.classList.add("hidden");
+  materialPage.classList.add("hidden");
+  menuPage.classList.remove("hidden");
+}
+
+function renderEmployees(){
+  let keyword = searchEmp.value.toLowerCase();
+  empTable.innerHTML="";
+  employees.forEach((e,i)=>{
+    if(e.id.includes(keyword)||e.name.toLowerCase().includes(keyword)){
+      empTable.innerHTML += `
+      <tr>
+        <td>${e.id}</td>
+        <td>${e.name}</td>
+        <td>
+          <button class="action-btn" onclick="editEmployee(${i})">Edit</button>
+          <button class="delete-btn" onclick="deleteEmployee(${i})">Delete</button>
+        </td>
+      </tr>`;
+    }
+  });
+}
+
+function saveEmployee(){
+  let id=empId.value, name=empName.value;
+  if(id==""||name=="") return alert("กรอกข้อมูลให้ครบ");
+  if(editEmpIndex==-1){
+    employees.push({id,name});
+  }else{
+    employees[editEmpIndex]={id,name};
+    editEmpIndex=-1;
+  }
+  empId.value=""; empName.value="";
+  renderEmployees();
+}
+
+function editEmployee(i){
+  empId.value=employees[i].id;
+  empName.value=employees[i].name;
+  editEmpIndex=i;
+}
+
+function deleteEmployee(i){
+  if(confirm("ลบพนักงาน?")){
+    employees.splice(i,1);
+    renderEmployees();
+  }
+}
+
+function renderMaterials(){
+  matTable.innerHTML="";
+  materials.forEach((m,i
