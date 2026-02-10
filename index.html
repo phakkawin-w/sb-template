@@ -6,39 +6,36 @@
 <style>
 body {
     font-family: Arial;
-    text-align: center;
-    background: #f2f2f2;
+    background:#f2f2f2;
+    text-align:center;
 }
 .box {
-    background: white;
-    width: 80%;
-    margin: auto;
-    padding: 20px;
-    border-radius: 10px;
+    background:white;
+    width:90%;
+    margin:auto;
+    padding:20px;
+    border-radius:10px;
 }
 button {
-    padding: 10px 15px;
-    margin: 5px;
-    background: black;
-    color: white;
-    border: none;
-    border-radius: 5px;
+    padding:10px 15px;
+    margin:5px;
+    background:black;
+    color:white;
+    border:none;
+    border-radius:5px;
 }
-button:hover {
-    background: gray;
+button:hover {background:gray;}
+input {
+    padding:8px;
+    margin:5px;
 }
 table {
-    margin: auto;
-    border-collapse: collapse;
-    width: 90%;
+    width:100%;
+    border-collapse:collapse;
 }
-th, td {
-    border: 1px solid black;
-    padding: 6px;
-}
-input {
-    padding: 8px;
-    margin: 5px;
+th,td {
+    border:1px solid black;
+    padding:6px;
 }
 </style>
 </head>
@@ -50,7 +47,7 @@ input {
 <div id="loginPage" class="box">
 <h2>Login</h2>
 <input type="text" id="user" placeholder="User"><br>
-<input type="password" id="pass" placeholder="Pass"><br><br>
+<input type="password" id="pass" placeholder="Pass"><br>
 <button onclick="login()">Login</button>
 <p id="msg"></p>
 </div>
@@ -67,16 +64,15 @@ input {
 <div id="employeePage" class="box" style="display:none;">
 <h2>ข้อมูลพนักงาน</h2>
 
-<table>
-<tr>
-<th>รหัสพนักงาน</th>
-<th>ชื่อ-นามสกุล</th>
-</tr>
+<input type="text" id="search" placeholder="ค้นหาชื่อหรือรหัส" onkeyup="searchEmployee()">
+
+<table id="empTable">
+<tr><th>รหัสพนักงาน</th><th>ชื่อ-นามสกุล</th></tr>
 <tr><td>600001</td><td>นาย สุเวช ทิมศรีกล่ำ</td></tr>
 <tr><td>600002</td><td>นาง พาเพลิน เทียนทอง</td></tr>
 <tr><td>600003</td><td>นาย ช้วน จันทร์น่วม</td></tr>
-<tr><td>600007</td><td>นาย สายันต์ เขจรลัย</td></tr>
-<tr><td>600008</td><td>นาย สมชาย ใจดี</td></tr>
+<tr><td>600004</td><td>นาย สายันต์ เขจรลัย</td></tr>
+<tr><td>600005</td><td>นาย ธีระวิทย์ ภัทรเกียรติ</td></tr>
 </table>
 
 <br>
@@ -87,15 +83,14 @@ input {
 <div id="materialPage" class="box" style="display:none;">
 <h2>ข้อมูลวัสดุก่อสร้าง</h2>
 
-<table>
-<tr>
-<th>ชื่อวัสดุ</th>
-<th>จำนวน</th>
-<th>คงเหลือ</th>
-</tr>
-<tr><td>ปูนซีเมนต์</td><td>100</td><td>50</td></tr>
-<tr><td>เหล็กเส้น</td><td>200</td><td>120</td></tr>
-<tr><td>ทราย</td><td>300</td><td>200</td></tr>
+<input type="text" id="matName" placeholder="ชื่อวัสดุ">
+<input type="number" id="matQty" placeholder="จำนวน">
+<button onclick="addMaterial()">เพิ่ม</button>
+
+<table id="matTable">
+<tr><th>ชื่อวัสดุ</th><th>จำนวน</th><th>ลบ</th></tr>
+<tr><td>ปูนซีเมนต์</td><td>100</td><td><button onclick="deleteRow(this)">X</button></td></tr>
+<tr><td>เหล็กเส้น</td><td>200</td><td><button onclick="deleteRow(this)">X</button></td></tr>
 </table>
 
 <br>
@@ -104,36 +99,52 @@ input {
 
 <script>
 function login(){
-    let user = document.getElementById("user").value;
-    let pass = document.getElementById("pass").value;
-
-    if(user=="admin" && pass=="1234"){
-        document.getElementById("loginPage").style.display="none";
-        document.getElementById("menuPage").style.display="block";
+    let u=document.getElementById("user").value;
+    let p=document.getElementById("pass").value;
+    if(u=="admin" && p=="1234"){
+        loginPage.style.display="none";
+        menuPage.style.display="block";
     } else {
-        document.getElementById("msg").innerHTML="Login ไม่ถูกต้อง";
+        msg.innerHTML="Login ไม่ถูกต้อง";
     }
 }
-
 function logout(){
-    document.getElementById("menuPage").style.display="none";
-    document.getElementById("loginPage").style.display="block";
+    menuPage.style.display="none";
+    loginPage.style.display="block";
 }
-
 function showEmployee(){
-    document.getElementById("menuPage").style.display="none";
-    document.getElementById("employeePage").style.display="block";
+    menuPage.style.display="none";
+    employeePage.style.display="block";
 }
-
 function showMaterial(){
-    document.getElementById("menuPage").style.display="none";
-    document.getElementById("materialPage").style.display="block";
+    menuPage.style.display="none";
+    materialPage.style.display="block";
 }
-
 function backMenu(){
-    document.getElementById("employeePage").style.display="none";
-    document.getElementById("materialPage").style.display="none";
-    document.getElementById("menuPage").style.display="block";
+    employeePage.style.display="none";
+    materialPage.style.display="none";
+    menuPage.style.display="block";
+}
+function searchEmployee(){
+    let input=document.getElementById("search").value.toLowerCase();
+    let rows=document.getElementById("empTable").rows;
+    for(let i=1;i<rows.length;i++){
+        let txt=rows[i].innerText.toLowerCase();
+        rows[i].style.display = txt.includes(input) ? "" : "none";
+    }
+}
+function addMaterial(){
+    let name=document.getElementById("matName").value;
+    let qty=document.getElementById("matQty").value;
+    if(name==""||qty=="") return alert("กรอกข้อมูลให้ครบ");
+    let table=document.getElementById("matTable");
+    let row=table.insertRow();
+    row.insertCell(0).innerHTML=name;
+    row.insertCell(1).innerHTML=qty;
+    row.insertCell(2).innerHTML="<button onclick='deleteRow(this)'>X</button>";
+}
+function deleteRow(btn){
+    btn.parentNode.parentNode.remove();
 }
 </script>
 
